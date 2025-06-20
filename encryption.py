@@ -4,7 +4,7 @@ class AESEncryption:
     def __init__(self, key=None):
         self.__key = self.gen_key(key)
         self.__round_keys = self.round_key(self.__key)
-        print(self.__round_keys)
+
     def gen_key(self, base_key:str=None) -> str :
         """
         ## Gen Function for AES Encryption scheme
@@ -42,19 +42,70 @@ class AESEncryption:
         
         new_bytes = ""
         for byte_index in range(0, 4, 2):
-            c_1, c_2 = word[byte_index], word[byte_index+1]
-            byte  = SBOX[int(c_1, base=16)][int(c_2, base=16)] 
-            new_bytes += hex(byte)[2:]
+            new_bytes += self.__sub_byte(word[byte_index: byte_index+2])
 
         new_bytes = hex(int(new_bytes[:2], base=16) ^ rc) + new_bytes[2:]
 
         return new_bytes
     
-    def encrypt(self, plaintext):
-        ...
-        ...
-    def decrypt(self, key):...
+    def encrypt(self, plaintext:bytes)->str:
+        # padding
+        padding_size = 16 - ((len(plaintext)) % 16)
+        plaintext = plaintext + (padding_size * padding_size.to_bytes())
+        # spilt
+        blocks = [plaintext[i*16:i*16+16] for i in range(len(plaintext)//16)]
+        # encrypt blocks
+        blocks = list(map(lambda block: self.encrypt_block(block) ,blocks))
+        # join cipher blocks
+        blocks = ''.join(blocks)
+        return blocks
+        # encrypt
+        
+    def encrypt_block(self, block: bytes) -> str: 
+        # create table
+        table = [''.join([hex(block[j])[2:] for j in range(4*i, 4*i+4)]) for i in range(4)]
+        table = self.__add_round_key(table, self.__round_keys[:4])
+        for round in range(1, 11):
+            table = self.__sub_bytes(table)
+            table = self.__shift_rows(table)
+            if round != 10:
+                table = self.__mix_columns(table)
+            table = self.__add_round_key(table, self.__round_keys[round*4: round*4 + 4])
+        block = ''.join(table)
+        return block
+
+    def __sub_bytes(self, table:list[str])->list[str]:
+        for column_index in range(4):
+            new_col = ''
+            for i in range(4):
+                new_col += self.__sub_byte(table[column_index][i*2: i*2+2])
+            table[column_index] = new_col
+        return table
+
+    def __sub_byte(self, word:str)->str:
+        if word.startswith('0x'): word = word[2:]
+        c_1, c_2 = word[0], word[1]
+        byte  = SBOX[int(c_1, base=16)][int(c_2, base=16)] 
+        byte  = byte.to_bytes().hex()
+        return byte
+
+    def __add_round_key(self, table:list[str], keys:list[str]) -> list[str]:
+        for i in range(4):
+            r = int(table[i], base=16) ^ int(keys[i], base=16)
+            table[i] = r.to_bytes(4).hex()
+        return table
+            
+        
+    def __shift_rows(self, table:list[str])->list[str]:
+        Warning("Not Implemented")
+        return table
+    def __mix_columns(self, table:list[str])->list[str]:
+        Warning("Not Implemented")
+        return table
     
-a = AESEncryption()
-# k1 = a.round_key(a.gen_key())
-a.encrypt()
+    def decrypt(self, key):...
+
+    
+# a = AESEncryption(key="amin2323")
+# print(a.encrypt(b'hello world! 123'))
+# 183071a77fe197f986e0f7319ed301917f8e80930904cab262b3142939c8f70f

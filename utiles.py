@@ -31,7 +31,7 @@ class AESCipher(object):
     def _unpad(s):
         return s[:-ord(s[len(s)-1:])]
 
-def encrypting(file: bytes)-> bytes:
+def encrypting(file: str)-> bytes:
     key = str(os.environ.get("KEY"))
     return AESCipher(key).encrypt(file)
 
