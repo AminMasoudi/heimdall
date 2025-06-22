@@ -27,12 +27,11 @@ class AESEncryption:
         rc= 1
         for i in range(4, 44):
             previous = words[i-1]
-            # print(previous)
             if i % 4 == 0:
                 previous = self.__g(previous, rc=rc)
                 rc << 1
             new = int(words[i-4], base=16) ^ int(previous, base=16)      
-            words.append(hex(new))
+            words.append(new.to_bytes(4).hex())
         return words
         
     def __g(self, word: str, rc:int)->str:
@@ -44,7 +43,7 @@ class AESEncryption:
         for byte_index in range(0, 4, 2):
             new_bytes += self.__sub_byte(word[byte_index: byte_index+2])
 
-        new_bytes = hex(int(new_bytes[:2], base=16) ^ rc) + new_bytes[2:]
+        new_bytes = (int(new_bytes[:2], base=16) ^ rc).to_bytes().hex() + new_bytes[2:]
 
         return new_bytes
     
@@ -97,10 +96,68 @@ class AESEncryption:
             
         
     def __shift_rows(self, table:list[str])->list[str]:
-        Warning("Not Implemented")
-        return table
+        new_table = []
+        for counter in range(4):
+            string = "".join(
+                [table[(i + counter) % 4][2*i: 2*i+2] for i in range(0, 4)]
+                )
+            new_table.append(string)
+        return new_table
+    
+    def __inv_shift_rows(self, table:list[str])-> list[str]:
+        new_table = []
+        for counter in range(4):
+            string = "".join(
+                [table[(i + counter) % 4][2*j: 2*j+2] for j, i in enumerate(range(0, -4, -1))]
+            )
+            new_table.append(string)
+        return new_table
+
+    def __gmul(self, a, b):
+        """Galois Field (256) Multiplication of two Bytes"""
+        p = 0
+        for _ in range(8):
+            if b & 1:
+                p ^= a
+            high_bit = a & 0x80
+            a = (a << 1) & 0xFF
+            if high_bit:
+                a ^= 0x1B
+            b >>= 1
+        return p
+
     def __mix_columns(self, table:list[str])->list[str]:
-        Warning("Not Implemented")
+        table = [[int(c[2*i:2*i+2], base=16) for i in range(4)] for c in table]
+        new_table = []
+        for c in table:
+            col = []
+            for r in range(4):
+                val: int = (
+                    self.__gmul(2, c[r]) 
+                    ^ self.__gmul(3 , c[(r +1)%4]) 
+                    ^ c[(r  + 2)%4] 
+                    ^ c[(r+3)%4])
+                
+                col.append(val.to_bytes().hex())
+            new_table.append(col)
+        table = ["".join(c) for c in new_table]
+        return table
+
+    def __inv_mix_columns(self, table:list[str])->list[str]:
+        table = [[int(c[2*i:2*i+2], base=16) for i in range(4)] for c in table]
+        new_table = []
+        for c in table:
+            col = []
+            for r in range(4):
+                val: int = (
+                    self.__gmul(  0xe, c[r]) 
+                    ^ self.__gmul(0xb , c[(r +1)%4]) 
+                    ^ self.__gmul(0xd, c[(r  + 2)%4]) 
+                    ^ self.__gmul(0x9, c[(r+3)%4])
+                )
+                col.append(val.to_bytes().hex())
+            new_table.append(col)
+        table = ["".join(c) for c in new_table]
         return table
     
     def decrypt(self, key):...
@@ -108,4 +165,5 @@ class AESEncryption:
     
 # a = AESEncryption(key="amin2323")
 # print(a.encrypt(b'hello world! 123'))
-# 183071a77fe197f986e0f7319ed301917f8e80930904cab262b3142939c8f70f
+# 5315b6eb8d7d26e1dc601f683334933daa02146b5e51cb44984abf095e3c1e3f
+
