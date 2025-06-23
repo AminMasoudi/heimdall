@@ -3,7 +3,7 @@ import httpx
 import os
 import json
 from encryption import AESEncryption
-from utiles import decrypt, encrypting, finder
+from utiles import finder
 from api_service import APIService, File
 
 BASE_URL="http://127.0.0.1:8000/api/v1/files/"
@@ -59,8 +59,10 @@ def download(identifier:int):
     
     
 @click.command()
-def list():
-    data = APIService().list()
+@click.pass_context
+def list(ctx: click.Context):
+    cloud = ctx.obj["config"]["CloudService"]
+    data = APIService(host=cloud["host"], port=cloud["port"]).list()
     click.echo("ID\t\tNAME")
     for record in data:
         click.secho(f"{record.id}",nl=False, fg="green")
