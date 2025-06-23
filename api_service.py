@@ -10,17 +10,23 @@ class File:
     content: bytes| None = field(default=None)
 
 class APIService:
-    base_url = "http://127.0.0.1:8000/api/v1/files/"
+    def __init__(self, host :str, port:int = None):
 
+        url = f"{host}{": "if port is not None else ""}{port}/api/v1/"
+        if not (url.startswith("http://") or url.startswith("https://")):
+            url = "http://" + url
+        self.base_url = url
+        self.file_url = self.base_url + "files/" 
+        
     def list(self) -> list[File]:
-        res = httpx.get(self.base_url)
+        res = httpx.get(self.file_url)
         data = json.loads(res.content)
         data = list(map(lambda file: File(id=file["id"], name=file["name"]), data))
         return data
 
     def create(self, file: File) -> tuple[UUID, bool]:
         try:
-            res = httpx.post(self.base_url, data={"name":file.name, "content": file.content})
+            res = httpx.post(self.file_url, data={"name":file.name, "content": file.content})
         except httpx.NetworkError as e:
             return None, False 
         
@@ -28,6 +34,6 @@ class APIService:
         return data["id"], True
 
     def retrieve(self, id) -> File:
-        res = httpx.get(self.base_url + f"{id}/")
+        res = httpx.get(self.file_url + f"{id}/")
         data = json.loads(res.content)
         return File(name=data["name"], id=data["id"], content=data["content"])
