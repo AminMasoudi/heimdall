@@ -2,8 +2,10 @@ import click
 import httpx
 import os
 import json
+from encryption import AESEncryption
 from utiles import decrypt, encrypting, finder
 from api_service import APIService, File
+
 BASE_URL="http://127.0.0.1:8000/api/v1/files/"
 
 @click.command()
@@ -18,10 +20,13 @@ def upload(file_name: str, encrypt: bool):
 
     # read the file
     with open(file_name, "br+") as file:
-        file = file.read().hex()
+        file = file.read()
             
     # encrypt the file
-    file = encrypting(file)
+    key = str(os.environ.get("KEY", None))
+    aes = AESEncryption(key)
+    file = aes.encrypt(file)
+
     # upload the encrypted file
     file = File(name=file_name, content=file)
     id, _ = APIService().create(file)
@@ -35,15 +40,20 @@ def download(identifier:int):
     try:
         id = finder(identifier).id
         file_data = APIService().retrieve(id)
+
     # decrypt the file
-        file_data.content = decrypt(file_data.content)
+        key = os.environ("KEY")
+        aes = AESEncryption(key)
+        file_data.content = aes.decrypt(file_data.content)
+
     except FileNotFoundError as e:
         click.secho(e, fg="red", err=True)
         exit(1)
     except Exception as e:
         raise Exception("an error") from e
+
     with open(file_data.name, "bw") as file:
-        file.write(bytes.fromhex(file_data.content))
+        file.write(file_data.content)
     click.echo("ID\t\tNAME")
     click.echo(f"{file_data.id}\t\t{file_data.name}")
     
