@@ -11,20 +11,24 @@ BASE_URL="http://127.0.0.1:8000/api/v1/files/"
 @click.command()
 @click.argument("file_name")
 @click.option("--encrypt", type=bool, default=True)
-def upload(file_name: str, encrypt: bool):
+@click.option("--password", type=str)
+@click.pass_context
+def upload(file_name: str, encrypt: bool, password: str, ctx: click.Context):
     """Upload a new file"""
     
     # find the file
     if not os.path.exists(file_name):
         raise FileNotFoundError("File does not exists")
 
+    if password is None:
+        password = ctx.obj["config"]["Credentials"]["password"] 
+
     # read the file
     with open(file_name, "br+") as file:
         file = file.read()
             
     # encrypt the file
-    key = str(os.environ.get("KEY", None))
-    aes = AESEncryption(key)
+    aes = AESEncryption(password)
     file = aes.encrypt(file)
 
     # upload the encrypted file
@@ -61,8 +65,8 @@ def download(identifier:int):
 @click.command()
 @click.pass_context
 def list(ctx: click.Context):
-    cloud = ctx.obj["config"]["CloudService"]
-    data = APIService(host=cloud["host"], port=cloud["port"]).list()
+    api_service: APIService = ctx.obj["api_service"]
+    data = api_service.list()
     click.echo("ID\t\tNAME")
     for record in data:
         click.secho(f"{record.id}",nl=False, fg="green")
@@ -70,20 +74,23 @@ def list(ctx: click.Context):
 
 @click.command()
 @click.argument("identifier")
-def delete(identifier: int):
+@click.pass_context
+def delete(ctx: click.Context, identifier: int):
     try:
         file = finder(identifier)
     except FileNotFoundError as e:
         click.secho(e, fg="red", err=True)
         exit(1)
+    api_service: APIService = ctx.obj["api_service"]
+    data = api_service.list()
+    
     click.echo("ID\t\tNAME")
     click.echo(f"{file.id}\t\t{file.name}")
     click.secho("Are you sure you want to delete this file??[y/N]", fg="red", bold=True)
     answer = input()
     if not ((answer =="y") or (answer == "yes")):
         exit(0)
-    httpx.delete(BASE_URL + f"{file.id}/")
-
+    api_service.delete(file.id)
 
 def login():
     raise NotImplementedError("Login is not Implemented yet")

@@ -12,16 +12,20 @@ class File:
 class APIService:
     def __init__(self, host :str, port:int = None):
 
-        url = f"{host}{": "if port is not None else ""}{port}/api/v1/"
-        if not (url.startswith("http://") or url.startswith("https://")):
-            url = "http://" + url
-        self.base_url = url
+        if not (
+            host.startswith("http://") 
+            or host.startswith("https://")
+            ):
+            host = "http://" + host
+        self.base_url = host
         self.file_url = self.base_url + "files/" 
-        
+
     def list(self) -> list[File]:
         res = httpx.get(self.file_url)
         data = json.loads(res.content)
-        data = list(map(lambda file: File(id=file["id"], name=file["name"]), data))
+        data = list(map(
+            lambda file: File(id=file["id"], name=file["name"]),
+            data))
         return data
 
     def create(self, file: File) -> tuple[UUID, bool]:
@@ -37,3 +41,9 @@ class APIService:
         res = httpx.get(self.file_url + f"{id}/")
         data = json.loads(res.content)
         return File(name=data["name"], id=data["id"], content=data["content"])
+
+    def delete(self, id): 
+        httpx.delete(self.file_url + f"{id}/")
+    
+    def login(self, username, password):
+        ...
