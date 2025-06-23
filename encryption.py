@@ -200,14 +200,3 @@ class AESEncryption:
                 col += val.to_bytes()
             new_table.append(col)
         return new_table
-
-
-a = AESEncryption(key="amin2323")
-
-# table = [b"0123", b'4567',b'89ab',b'cdef']
-# print(a._inv_mix_columns(a._mix_columns(table)))
-
-print((c := a.encrypt(b"hello world! 123")).hex())
-print(m := a.decrypt(c))
-
-# b'e6ed625e7e488f29f41f9c8ae50733e9bcc024f8ea3fcdc4165a1c3d99217608'
