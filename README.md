@@ -2,8 +2,8 @@
 
 
 ## TODO:
-- [ ] Documentation 
 - [ ] Testing
-- [ ] Cleaning All functions
 - [ ] Key flow: from where?
-- [ ] Login
+- [ ] Cleaning All functions
+- [ ] Documentation 
+- [x] Login

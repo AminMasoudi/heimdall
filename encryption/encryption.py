@@ -1,5 +1,5 @@
-import os, hashlib
-from s_box import SBOX, INV_S_BOX
+import os, hashlib, time
+from .s_box import SBOX, INV_S_BOX
 
 
 class AESEncryption:
@@ -69,7 +69,7 @@ class AESEncryption:
         blocks = blocks[:-end]
         return blocks
 
-    def decrypt_block(self, block: bytes) -> bytes:
+    def decrypt_block(self, block: bytes) -> bytes:        
         table = [block[4 * i : 4 * i + 4] for i in range(4)]
         table = self.__add_round_key(table, self.__round_keys[40:])
         for round in range(10, 0, -1):
@@ -80,7 +80,6 @@ class AESEncryption:
             )
             if round != 1:
                 table = self.__inv_mix_columns(table)
-
         block = b"".join(table)
         return block
 
