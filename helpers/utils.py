@@ -3,7 +3,7 @@ from .api_service import APIService, File
 from functools import wraps
 
 
-def finder(api_service, identifier: str) -> File:
+def finder(api_service: APIService, identifier: str) -> File:
     files = api_service.list()
     matching = []
     for file in files:
