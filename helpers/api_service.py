@@ -24,7 +24,7 @@ class APIService:
         self.base_url = host.rstrip("/")
         self.file_url = f"{self.base_url}/api/v1/files/"
         self.auth_url = f"{self.base_url}/api/v1/token/"
-        self.client = httpx.Client()()
+        self.client = httpx.Client()
 
     def authenticate(self, access_token: str, refresh_token: str) -> None:
         """
@@ -51,6 +51,7 @@ class APIService:
                 raise Exception("Failed to authenticate. Please login again.")
             token = token_or_msg
 
+        self.client.close()
         self.client = httpx.Client(headers={"Authorization": f"Bearer {token}"})
 
     def list(self) -> list[File]:

@@ -11,7 +11,7 @@ path = Path(CONFIG_PATH + "/heimdall_config.ini")
 
 
 @click.group()
-@error_handling
+# @error_handling
 @click.pass_context
 def cli(ctx: click.Context):
     # click.echo("Hi there")
