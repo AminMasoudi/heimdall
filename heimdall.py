@@ -1,8 +1,9 @@
 import click
 from helpers.api_service import APIService
 from helpers.utils import error_handling
+from helpers.config_manager import ConfigManager
 import subcommands
-import os, configparser
+import os
 from pathlib import Path
 
 CONFIG_PATH = os.path.expanduser("~/.config")
@@ -15,13 +16,12 @@ path = Path(CONFIG_PATH + "/heimdall_config.ini")
 def cli(ctx: click.Context):
     # click.echo("Hi there")
     # handel file configuration and password management
-    config = configparser.ConfigParser()
+    config = ConfigManager(file_addr=path.as_posix())
     if not path.is_file():
         config["Encryption"] = {"scheme": "AES", "block-size": 128}
         config["CloudService"] = {"url": "heimdall.amcsui.ir:8000"}
-        with open(path.as_posix(), "w") as config_file:
-            config.write(config_file)
-    config.read(path.as_posix())
+        config.update()
+    config.read()
     access = config["CloudService"].get("Access-Token")
     refresh = config["CloudService"].get("Refresh-Token")
 

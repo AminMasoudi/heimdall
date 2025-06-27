@@ -21,6 +21,4 @@ def login(obj, username: str = None, password: str = None):
     access, refresh = api_service.login(username, password)
     obj["config"].set(section="CloudService", option="Access-Token", value=access)
     obj["config"].set(section="CloudService", option="Refresh-Token", value=refresh)
-    path = os.path.expanduser("~/.config/heimdall_config.ini")
-    with open(path, "w") as config_file:
-        obj["config"].write(config_file)
+    obj["config"].update()
