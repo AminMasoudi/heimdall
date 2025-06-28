@@ -108,7 +108,7 @@ class APIService:
             return File(name=data["name"], id=data["id"], content=data["content"])
         except Exception as e:
             raise e
-        
+
     def delete(self, id: UUID) -> None:
         """
         Deletes a specific file by its ID.
@@ -118,7 +118,7 @@ class APIService:
         """
         res = self.client.delete(f"{self.file_url}{id}/")
         res.raise_for_status()
-        
+
     def login(self, username: str, password: str) -> tuple[str, str]:
         """
         Logs in using username and password to obtain access and refresh tokens.
@@ -162,14 +162,15 @@ class APIService:
             # print(f"Token verification request failed: {exc}")
             return False
 
-    def __refresh(self, refresh_token: str) -> tuple[bool, str]:
-        if not self.__verify_token(refresh_token):
-            return False, "Not a valid refresh token"
-        res = httpx.post(self.auth_url + "refresh/", data={"refresh": refresh_token})
-        if res.status_code == 200:
-            access_token = json.loads(res.content)["access"]
-            return True, access_token
-        return False, "failed to refresh token"
+    # def __refresh(self, refresh_token: str) -> tuple[bool, str]:
+    #     if not self.__verify_token(refresh_token):
+    #         return False, "Not a valid refresh token"
+    #     res = httpx.post(self.auth_url + "refresh/", data={"refresh": refresh_token})
+    #     if res.status_code == 200:
+    #         access_token = json.loads(res.content)["access"]
+    #         return True, access_token
+    #     return False, "failed to refresh token"
+
     def __refresh(self, refresh_token: str) -> tuple[bool, str]:
         """
         Attempts to refresh the access token using a refresh token.
@@ -185,7 +186,9 @@ class APIService:
             return False, "Not a valid refresh token"
 
         try:
-            res = httpx.post(f"{self.auth_url}refresh/", data={"refresh": refresh_token})
+            res = httpx.post(
+                f"{self.auth_url}refresh/", data={"refresh": refresh_token}
+            )
             if res.status_code == 200:
                 access_token = res.json()["access"]
                 return True, access_token

@@ -1,8 +1,8 @@
 import click
 import os
-from encryption import AESEncryption
-from helpers.utils import finder, login_required, error_handling
-from helpers.api_service import APIService, File
+from ..encryption import AESEncryption
+from ..helpers.utils import finder, login_required, error_handling
+from ..helpers.api_service import APIService, File
 
 
 @click.command()

@@ -117,16 +117,13 @@ class AESEncryption:
 
     def __inv_sub_byte(self, word: bytes) -> bytes:
         word = word[0]
-        # c_1, c_2 = word[0], word[1]
-        # byte  = INV_S_BOX[int(c_1, base=16)][int(c_2, base=16)]
         byte = INV_S_BOX[word]
         byte = byte.to_bytes()
         return byte
 
     def __sub_byte(self, word: bytes) -> bytes:
-        word = word.hex()
-        c_1, c_2 = word[0], word[1]
-        byte = SBOX[int(c_1, base=16)][int(c_2, base=16)]
+        # byte = SBOX[int(c_1, base=16)][int(c_2, base=16)]
+        byte = SBOX[word[0]]
         byte = byte.to_bytes()
         return byte
 

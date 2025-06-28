@@ -1,8 +1,8 @@
 import click
-from helpers.api_service import APIService
-from helpers.utils import error_handling
-from helpers.config_manager import ConfigManager
-import subcommands
+from .helpers.api_service import APIService
+from .helpers.utils import error_handling
+from .helpers.config_manager import ConfigManager
+from . import subcommands
 import os
 from pathlib import Path
 
@@ -22,9 +22,6 @@ def cli(ctx: click.Context):
         config["CloudService"] = {"url": "heimdall.amcsui.ir:8000"}
         config.update()
     config.read()
-    access = config["CloudService"].get("Access-Token")
-    refresh = config["CloudService"].get("Refresh-Token")
-
     ctx.obj = {
         "config": config,
         "api_service": APIService(host=config["CloudService"]["host"]),

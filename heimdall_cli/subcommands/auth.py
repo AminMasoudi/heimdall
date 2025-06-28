@@ -1,14 +1,14 @@
 import os
 import click
-from helpers.api_service import APIService
-from helpers.utils import error_handling
+from ..helpers.api_service import APIService
+from ..helpers.utils import error_handling
 
 
 @click.command()
 @click.option("--username")
 @click.option("--password")
 @click.pass_obj
-@error_handling
+# @error_handling
 def login(obj, username: str = None, password: str = None):
     api_service: APIService = obj["api_service"]
     if username is None:
