@@ -42,6 +42,7 @@ def upload(obj, file_name: str, encrypt: bool, password: str):
 @click.command()
 @click.argument("identifier")
 @click.pass_obj
+@error_handling
 @login_required
 @click.option("--password", type=str)
 def download(obj, identifier:int, password:str):
@@ -79,6 +80,7 @@ def download(obj, identifier:int, password:str):
     
 @click.command()
 @click.pass_obj
+@error_handling
 @login_required
 def list(obj):
     api_service: APIService = obj["api_service"]
@@ -91,6 +93,7 @@ def list(obj):
 @click.command()
 @click.argument("identifier")
 @click.pass_obj
+@error_handling
 @login_required
 def delete(obj, identifier: int):
     api_service: APIService = obj["api_service"]    

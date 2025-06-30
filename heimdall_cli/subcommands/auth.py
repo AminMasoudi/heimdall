@@ -8,7 +8,7 @@ from ..helpers.utils import error_handling
 @click.option("--username")
 @click.option("--password")
 @click.pass_obj
-# @error_handling
+@error_handling
 def login(obj, username: str = None, password: str = None):
     api_service: APIService = obj["api_service"]
     if username is None:
