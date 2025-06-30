@@ -6,13 +6,23 @@ from . import subcommands
 import os
 from pathlib import Path
 
+VERSION = "1.0.1"
+
 CONFIG_PATH = os.path.expanduser("~/.config")
 path = Path(CONFIG_PATH + "/heimdall_config.ini")
 
-
+def print_version(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo('Version 0.1.2')
+    ctx.exit()
+    
+    
 @click.group()
 @error_handling
 @click.pass_context
+@click.option('--version', is_flag=True, callback=print_version,
+              expose_value=False, is_eager=True)
 def cli(ctx: click.Context):
     config = ConfigManager(file_addr=path.as_posix())
     if not path.is_file():
