@@ -46,6 +46,7 @@ def upload(obj, file_name: str, encrypt: bool, password: str):
 @login_required
 @click.option("--password", type=str)
 def download(obj, identifier:int, password:str):
+    """Download a file"""
     click.echo("[Starting]")
     api_service: APIService = obj["api_service"]
     try:
@@ -83,6 +84,7 @@ def download(obj, identifier:int, password:str):
 @error_handling
 @login_required
 def list(obj):
+    """List all users files"""
     api_service: APIService = obj["api_service"]
     data = api_service.list()
     click.echo("ID\t\tNAME")
@@ -96,6 +98,7 @@ def list(obj):
 @error_handling
 @login_required
 def delete(obj, identifier: int):
+    """Delete a file"""
     api_service: APIService = obj["api_service"]    
     try:
         file = finder(api_service, identifier)

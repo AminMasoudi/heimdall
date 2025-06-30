@@ -10,6 +10,7 @@ from ..helpers.utils import error_handling
 @click.pass_obj
 @error_handling
 def login(obj, username: str = None, password: str = None):
+    """Login to Server"""
     api_service: APIService = obj["api_service"]
     if username is None:
         click.echo("username: ", nl=False)
