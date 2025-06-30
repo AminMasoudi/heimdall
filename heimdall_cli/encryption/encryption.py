@@ -122,7 +122,6 @@ class AESEncryption:
         return byte
 
     def __sub_byte(self, word: bytes) -> bytes:
-        # byte = SBOX[int(c_1, base=16)][int(c_2, base=16)]
         byte = SBOX[word[0]]
         byte = byte.to_bytes()
         return byte

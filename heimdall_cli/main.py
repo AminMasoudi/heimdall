@@ -11,11 +11,9 @@ path = Path(CONFIG_PATH + "/heimdall_config.ini")
 
 
 @click.group()
-# @error_handling
+@error_handling
 @click.pass_context
 def cli(ctx: click.Context):
-    # click.echo("Hi there")
-    # handel file configuration and password management
     config = ConfigManager(file_addr=path.as_posix())
     if not path.is_file():
         config["Encryption"] = {"scheme": "AES", "block-size": 128}
