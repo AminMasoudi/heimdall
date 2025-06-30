@@ -6,7 +6,7 @@ from . import subcommands
 import os
 from pathlib import Path
 
-VERSION = "1.0.1"
+VERSION = "0.1.5"
 
 CONFIG_PATH = os.path.expanduser("~/.config")
 path = Path(CONFIG_PATH + "/heimdall_config.ini")
@@ -14,7 +14,7 @@ path = Path(CONFIG_PATH + "/heimdall_config.ini")
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo('Version 0.1.2')
+    click.echo(f'Version {VERSION}')
     ctx.exit()
     
     

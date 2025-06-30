@@ -1,6 +1,6 @@
 [project]
 name = "heimdall-cli"  # PyPI name
-version = "0.1.4"
+version = "0.1.5"
 description = "Command-line utility for secure and efficient file encryption and storage."
 authors = [
     { name = "amin masoudi", email = "aminmasoudi2003@gmail.com" }
