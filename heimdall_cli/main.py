@@ -27,7 +27,7 @@ def cli(ctx: click.Context):
     config = ConfigManager(file_addr=path.as_posix())
     if not path.is_file():
         config["Encryption"] = {"scheme": "AES", "block-size": 128}
-        config["CloudService"] = {"url": "heimdall.amcsui.ir:8000"}
+        config["CloudService"] = {"host": "heimdall.amcsui.ir:8000"}
         config.update()
     config.read()
     ctx.obj = {
@@ -41,3 +41,5 @@ cli.add_command(subcommands.download)
 cli.add_command(subcommands.list)
 cli.add_command(subcommands.delete)
 cli.add_command(subcommands.login)
+cli.add_command(subcommands.set_config)
+cli.add_command(subcommands.config)

@@ -18,3 +18,11 @@ class ConfigManager(configparser.ConfigParser):
     def read(self, encoding = None):
         filenames = self.__file_addr
         return super().read(filenames, encoding)
+    
+    def __repr__(self):
+        sections = self.sections()
+        data = []
+        for section in sections:
+            data.append(section.upper())
+            data.append(str(self.items(section)))
+        return str('\n'.join(data))

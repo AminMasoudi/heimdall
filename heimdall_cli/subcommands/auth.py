@@ -1,5 +1,7 @@
 import os
 import click
+
+from ..helpers.config_manager import ConfigManager
 from ..helpers.api_service import APIService
 from ..helpers.utils import error_handling
 
@@ -23,3 +25,25 @@ def login(obj, username: str = None, password: str = None):
     obj["config"].set(section="CloudService", option="Access-Token", value=access)
     obj["config"].set(section="CloudService", option="Refresh-Token", value=refresh)
     obj["config"].update()
+
+@click.command()
+@click.option("--host")
+@click.pass_obj
+@error_handling
+def set_config(obj, host):
+    """Set Configs(set host only)"""
+    if host is None:
+        host = input("Host: ")
+    config: ConfigManager = obj["config"]
+    config.set(section="CloudService", option="host", value=host, save=True)
+    
+
+
+@click.command()
+@click.option("--host")
+@click.pass_obj
+@error_handling
+def config(obj, host):
+    """Read Configs"""
+    config: ConfigManager = obj["config"]
+    click.echo(config)
