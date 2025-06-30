@@ -47,12 +47,9 @@ def upload(obj, file_name: str, encrypt: bool, password: str):
 @click.option("--password", type=str)
 def download(obj, identifier:int, password:str):
     """Download a file"""
-    click.echo("[Starting]")
     api_service: APIService = obj["api_service"]
     try:
-        click.echo("[Searching]")
         id = finder(api_service, identifier).id
-        click.echo("[Downloading]")
         file_data = api_service.retrieve(id)
 
         if password is None:
@@ -60,7 +57,6 @@ def download(obj, identifier:int, password:str):
                 obj["config"]["Credentials"].get("password") or \
                 input("decryption key: ")
 
-        click.echo("[Decrypting]")
     # decrypt the file
         aes = AESEncryption(password)
         file_data.content = aes.decrypt(bytes.fromhex(file_data.content))
@@ -72,7 +68,6 @@ def download(obj, identifier:int, password:str):
         # raise Exception("an error") from e
         raise e
 
-    click.echo("[Saving]")
     with open(file_data.name, "bw") as file:
         file.write(file_data.content)
     click.echo("ID\t\tNAME")
