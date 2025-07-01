@@ -1,6 +1,8 @@
 
 # Heimdall-CLI
 
+[encryption doc](./heimdall_cli/encryption/README.md)
+
 **Heimdall** is a CLI tool to **encrypt**, **upload**, **download**, and manage your files securely using **AES encryption** and a remote server backend.
 
 🔐 Built for privacy. ⚙️ Simple to use. ☁️ Backed by a fast API.
